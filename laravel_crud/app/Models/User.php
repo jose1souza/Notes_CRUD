@@ -3,6 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\AcademicYear;
+use App\Models\Discipline;
+use App\Models\Notebook;
+use App\Models\Task;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -28,5 +32,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function academicYears()
+    {
+        return $this->hasMany(AcademicYear::class);
+    }
+
+    public function disciplines()
+    {
+        return $this->hasMany(Discipline::class);
+    }
+
+    public function notebooks()
+    {
+        return $this->hasMany(Notebook::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
     }
 }
