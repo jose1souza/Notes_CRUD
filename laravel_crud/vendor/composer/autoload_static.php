@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c
+class ComposerStaticInit12a93e9ee58f99b3ee9ac9b5d35d65e5
 {
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
@@ -222,8 +222,8 @@ class ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'Whoops\\' => 
         array (
@@ -387,8 +387,8 @@ class ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -456,8 +456,8 @@ class ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c
         ),
         'Nette\\' => 
         array (
-            0 => __DIR__ . '/..' . '/nette/utils/src',
-            1 => __DIR__ . '/..' . '/nette/schema/src',
+            0 => __DIR__ . '/..' . '/nette/schema/src',
+            1 => __DIR__ . '/..' . '/nette/utils/src',
         ),
         'Monolog\\' => 
         array (
@@ -469,8 +469,8 @@ class ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces',
-            1 => __DIR__ . '/..' . '/league/uri',
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'League\\MimeTypeDetection\\' => 
         array (
@@ -799,6 +799,8 @@ class ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c
         'Cron\\MonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
+        'Database\\Seeders\\DisciplineSeeder' => __DIR__ . '/../..' . '/database/seeders/DisciplineSeeder.php',
+        'Database\\Seeders\\UserSeeder' => __DIR__ . '/../..' . '/database/seeders/UserSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
         'DateInvalidOperationException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',
@@ -8207,9 +8209,9 @@ class ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitb6db7e6b5576b5c394a57f9e61d20f0c::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit12a93e9ee58f99b3ee9ac9b5d35d65e5::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit12a93e9ee58f99b3ee9ac9b5d35d65e5::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit12a93e9ee58f99b3ee9ac9b5d35d65e5::$classMap;
 
         }, null, ClassLoader::class);
     }
