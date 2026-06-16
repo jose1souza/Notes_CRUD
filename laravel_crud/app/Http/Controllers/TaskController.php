@@ -4,9 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class TaskController extends Controller
 {
+    public function index(Request $request)
+    {
+        $tasks = $request->user()
+            ->tasks()
+            ->with('discipline')
+            ->latest()
+            ->paginate(10);
+
+        return view('tasks.index', compact('tasks'));
+    }
+
     public function create(Request $request)
     {
         return view('tasks.create', [
@@ -19,33 +31,85 @@ class TaskController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'discipline_id' => ['required', 'exists:disciplines,id'],
-            'due_date' => [
-                'required',
-                'date_format:Y-m-d\TH:i',
-                'after:now',
-                function ($attribute, $value, $fail) {
-                    $dueDate = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $value);
-                    if ($dueDate <= \Carbon\Carbon::now()) {
-                        $fail('Data e hora devem ser no futuro.');
-                    }
-                },
-            ],
-            'note' => ['nullable', 'string', 'max:1000'],
-        ], [
-            'title.required' => 'Dê um título à tarefa.',
-            'title.max' => 'Título muito longo.',
-            'discipline_id.required' => 'Escolha uma disciplina.',
-            'discipline_id.exists' => 'Disciplina inválida.',
-            'due_date.required' => 'Informe a data de entrega.',
-            'due_date.date_format' => 'Data/hora no formato incorreto.',
-            'due_date.after' => 'Data e hora devem ser no futuro.',
-            'note.max' => 'Observações muito longas.',
+            'due_date_date' => ['required', 'date'],
+            'due_date_time' => ['required', 'date_format:H:i'],
+            'description' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $request->user()->tasks()->create(array_merge($data, ['completed' => false]));
+        // Combina os inputs de data e hora em um único objeto Carbon
+        $dueDate = Carbon::createFromFormat('Y-m-d H:i', $data['due_date_date'].' '.$data['due_date_time']);
 
-        return redirect()->route('dashboard')
-            ->with('success', 'Tarefa criada.');
+        // Validação em tempo real: impede de salvar se o momento exato já passou
+        if ($dueDate->isPast()) {
+            return back()
+                ->withErrors([
+                    'due_date_date' => 'O prazo informado já passou. Escolha um horário igual ou posterior ao momento atual.'
+                ])
+                ->withInput();
+        }
+
+        $request->user()->tasks()->create([
+            'title' => $data['title'],
+            'discipline_id' => $data['discipline_id'],
+            'due_date' => $dueDate,
+            'description' => $data['description'] ?? null,
+            'completed' => false,
+        ]);
+
+        return redirect()->route('tasks.index')
+            ->with('success', 'Tarefa criada com sucesso.');
+    }
+
+    public function show(Request $request, Task $task)
+    {
+        abort_if($task->user_id !== $request->user()->id, 403);
+
+        $task->load('discipline');
+
+        return view('tasks.show', compact('task'));
+    }
+
+    public function edit(Request $request, Task $task)
+    {
+        abort_if($task->user_id !== $request->user()->id, 403);
+
+        return view('tasks.edit', [
+            'task' => $task,
+            'disciplines' => $request->user()->disciplines()->orderBy('title')->get(),
+        ]);
+    }
+
+    public function update(Request $request, Task $task)
+    {
+        abort_if($task->user_id !== $request->user()->id, 403);
+
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'discipline_id' => ['required', 'exists:disciplines,id'],
+            'due_date_date' => ['required', 'date'],
+            'due_date_time' => ['required', 'date_format:H:i'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $dueDate = Carbon::createFromFormat('Y-m-d H:i', $data['due_date_date'].' '.$data['due_date_time']);
+
+        if ($dueDate->isPast()) {
+            return back()
+                ->withErrors([
+                    'due_date_date' => 'O prazo informado já passou. Escolha um horário igual ou posterior ao momento atual.'
+                ])
+                ->withInput();
+        }
+
+        $task->update([
+            'title' => $data['title'],
+            'discipline_id' => $data['discipline_id'],
+            'due_date' => $dueDate,
+            'description' => $data['description'] ?? null,
+        ]);
+
+        return redirect()->route('tasks.index')
+            ->with('success', 'Tarefa atualizada com sucesso.');
     }
 
     public function toggle(Request $request, Task $task)
@@ -54,7 +118,7 @@ class TaskController extends Controller
 
         $task->update(['completed' => !$task->completed]);
 
-        return back()->with('success', $task->completed ? 'Tarefa concluída.' : 'Tarefa reabertar.');
+        return back()->with('success', $task->completed ? 'Tarefa concluída.' : 'Tarefa reaberta.');
     }
 
     public function destroy(Request $request, Task $task)
@@ -63,6 +127,7 @@ class TaskController extends Controller
 
         $task->delete();
 
-        return back()->with('success', 'Tarefa removida.');
+        return redirect()->route('tasks.index')
+            ->with('success', 'Tarefa removida.');
     }
 }

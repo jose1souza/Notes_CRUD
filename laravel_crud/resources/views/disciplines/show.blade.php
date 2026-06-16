@@ -10,7 +10,9 @@
                     <h1 class="h3 mb-1">{{ $discipline->title }}</h1>
                     <p class="text-muted mb-0">{{ $discipline->academicYear->title ?? 'Ano Letivo não definido' }}</p>
                 </div>
-                <span class="status-pill {{ $discipline->tasks->where('completed', false)->count() ? 'pending' : 'completed' }}">{{ $discipline->tasks->where('completed', false)->count() }} pendentes</span>
+                <span class="status-pill {{ $discipline->tasks->where('completed', false)->count() ? 'pending' : 'completed' }}">
+                    {{ $discipline->tasks->where('completed', false)->count() }} pendentes
+                </span>
             </div>
             <div class="mb-4">
                 <p>{{ $discipline->description ?: 'Descrição não informada.' }}</p>
@@ -32,6 +34,7 @@
                 </div>
             </div>
         </div>
+
         <div class="surface-card p-4 mt-4">
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h2 class="h5 mb-0">Tarefas da disciplina</h2>
@@ -58,11 +61,35 @@
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-outline-secondary">Alterar</button>
                                 </form>
-                                <form method="POST" action="{{ route('tasks.destroy', $task) }}" onsubmit="return confirm('Deseja mesmo excluir esta tarefa?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
-                                </form>
+                                <!-- Botão abre modal -->
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteTaskModal{{ $task->id }}">
+                                    Excluir
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Modal de exclusão da tarefa -->
+                        <div class="modal fade" id="deleteTaskModal{{ $task->id }}" tabindex="-1" aria-labelledby="deleteTaskLabel{{ $task->id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content surface-card">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title fw-bold" id="deleteTaskLabel{{ $task->id }}">Confirmar exclusão</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="text-muted mb-0">
+                                            Tem certeza que deseja excluir a tarefa <strong>{{ $task->title }}</strong>? Essa ação não poderá ser desfeita.
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        <form method="POST" action="{{ route('tasks.destroy', $task) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger">Excluir</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @endforeach
@@ -79,11 +106,35 @@
                 <span class="badge text-bg-light" style="color: {{ $discipline->color ?: '#2d6cdf' }}; border: 1px solid {{ $discipline->color ?: '#2d6cdf' }};">Visualizar cor</span>
             </div>
             <div class="d-grid gap-2">
-                <a href="{{ route('disciplines.create') }}" class="btn btn-outline-primary w-100 mb-2">Editar disciplina</a>
-                <form method="POST" action="{{ route('disciplines.destroy', $discipline) }}" onsubmit="return confirm('Deseja mesmo excluir esta disciplina?');">
+                <a href="{{ route('disciplines.edit', $discipline) }}" class="btn btn-outline-primary w-100 mb-2">Editar disciplina</a>
+                <!-- Botão abre modal -->
+                <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteDisciplineModal">
+                    Excluir disciplina
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de exclusão da disciplina -->
+<div class="modal fade" id="deleteDisciplineModal" tabindex="-1" aria-labelledby="deleteDisciplineLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content surface-card">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="deleteDisciplineLabel">Confirmar exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-0">
+                    Tem certeza que deseja excluir a disciplina <strong>{{ $discipline->title }}</strong>? Essa ação não poderá ser desfeita.
+                </p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="POST" action="{{ route('disciplines.destroy', $discipline) }}">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger w-100">Excluir disciplina</button>
+                    <button type="submit" class="btn btn-danger">Excluir</button>
                 </form>
             </div>
         </div>

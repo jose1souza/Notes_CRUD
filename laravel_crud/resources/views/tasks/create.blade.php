@@ -10,36 +10,61 @@
                     <h1 class="h3 mb-0">Planejar entrega</h1>
                 </div>
             </div>
+
             <form method="POST" action="{{ route('tasks.store') }}" novalidate>
                 @csrf
+
                 <x-input
                     name="title"
                     label="Título da tarefa"
                     type="text"
                     required="true"
+                    :value="old('title')"
                 />
+
                 <x-select
                     name="discipline_id"
                     label="Disciplina"
                     required="true"
                     placeholder="Selecione uma disciplina"
-                    :options="$disciplines->mapWithKeys(fn($d) => [$d->id => $d->title . ' — ' . ($d->academicYear->title ?? 'Sem ano')])->toArray()"
+                    :options="$disciplines->mapWithKeys(fn($d) => [
+                        $d->id => $d->title . ' — ' . ($d->academicYear->title ?? 'Sem ano')
+                    ])->toArray()"
                 />
-                <x-input
-                    name="due_date"
-                    label="Data de entrega"
-                    type="datetime-local"
-                    required="true"
-                    validation="datetime-future"
-                    hint="Data e hora devem ser no futuro."
-                />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <x-input
+                            name="due_date_date"
+                            label="Data de entrega"
+                            type="date"
+                            required="true"
+                            :value="old('due_date_date')"
+                            min="{{ now()->format('Y-m-d') }}"
+                            hint="Escolha hoje ou uma data futura."
+                        />
+                    </div>
+                    <div class="col-md-6">
+                        <x-input
+                            name="due_date_time"
+                            label="Hora de entrega"
+                            type="time"
+                            required="true"
+                            :value="old('due_date_time')"
+                            hint="Informe o horário limite para a entrega."
+                        />
+                    </div>
+                </div>
+
                 <x-textarea
-                    name="note"
+                    name="description"
                     label="Observações"
                     :rows="4"
+                    :value="old('description')"
                 />
-                <div class="d-flex justify-content-between">
-                    <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">Voltar</a>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary">Voltar</a>
                     <button type="submit" class="btn btn-brand">Salvar tarefa</button>
                 </div>
             </form>

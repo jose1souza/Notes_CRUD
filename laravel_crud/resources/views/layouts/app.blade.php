@@ -43,9 +43,7 @@
             box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
         }
 
-        .grid-gap {
-            gap: 1.5rem;
-        }
+        .grid-gap { gap: 1.5rem; }
 
         .icon-badge {
             display: inline-flex;
@@ -59,10 +57,6 @@
             font-size: 1rem;
         }
 
-        .text-contrast {
-            color: #111827;
-        }
-
         .alert-card {
             border-radius: 1rem;
             padding: 1rem 1.2rem;
@@ -73,37 +67,23 @@
             box-shadow: 0 0 0 0.2rem rgba(45, 108, 223, 0.18);
         }
 
-        /* Validation states */
+        /* Estados de validação */
         .form-control.is-invalid,
         .form-select.is-invalid {
             border-color: var(--danger);
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='12 12 24 24'%3e%3ccircle cx='24' cy='24' r='12' fill='none' stroke='%23d64545' stroke-width='2'/%3e%3cpath fill='%23d64545' d='M24 14l1.414 1.414L24 16.828l1.414 1.414L24 19.656l1.414 1.414L24 22.484l1.414 1.414L24 24z'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right calc(0.375em + 0.1875rem) center;
             background-size: calc(1em + 0.375rem) calc(1em + 0.375rem);
             padding-right: calc(1.5em + 0.75rem);
-        }
-
-        .form-control.is-invalid:focus,
-        .form-select.is-invalid:focus {
-            border-color: var(--danger);
-            box-shadow: 0 0 0 0.2rem rgba(214, 69, 69, 0.18);
         }
 
         .form-control.is-valid,
         .form-select.is-valid {
             border-color: var(--success);
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3e%3cpath fill='%232f9d56' d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right calc(0.375em + 0.1875rem) center;
             background-size: calc(1em + 0.375rem) calc(1em + 0.375rem);
             padding-right: calc(1.5em + 0.75rem);
-        }
-
-        .form-control.is-valid:focus,
-        .form-select.is-valid:focus {
-            border-color: var(--success);
-            box-shadow: 0 0 0 0.2rem rgba(47, 157, 86, 0.18);
         }
 
         .invalid-feedback {
@@ -173,10 +153,10 @@
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     @auth
                         <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('academic-years.create') }}">Ano Letivo</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('disciplines.create') }}">Disciplina</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('notebooks.create') }}">Caderno</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('tasks.create') }}">Tarefa</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('academic-years.index') }}">Ano Letivo</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('disciplines.index') }}">Disciplina</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('notebooks.index') }}">Caderno</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('tasks.index') }}">Tarefa</a></li>
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -198,7 +178,7 @@
     </main>
 
     <footer class="mt-5 py-4 text-center text-muted small">
-        <div class="container">Protótipo acadêmico responsivo com foco em organização de disciplinas, cadernos e tarefas.</div>
+        <div class="container">&copy; {{ date('Y') }} {{ config('app.name') }}. Todos os direitos reservados.</div>
     </footer>
 </body>
 </html>

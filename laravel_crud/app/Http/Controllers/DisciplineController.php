@@ -7,6 +7,19 @@ use Illuminate\Http\Request;
 
 class DisciplineController extends Controller
 {
+
+public function index(Request $request)
+    {
+        // Carrega todas as disciplinas do usuário autenticado
+        $disciplines = $request->user()
+            ->disciplines()
+            ->with('academicYear')
+            ->latest()
+            ->paginate(10);
+
+        return view('disciplines.index', compact('disciplines'));
+    }
+
     public function create(Request $request)
     {
         return view('disciplines.create', [
@@ -44,6 +57,33 @@ class DisciplineController extends Controller
         return view('disciplines.show', [
             'discipline' => $discipline,
         ]);
+    }
+
+    public function edit(Request $request, Discipline $discipline)
+    {
+        abort_if($discipline->user_id !== $request->user()->id, 403);
+
+        return view('disciplines.edit', [
+            'discipline' => $discipline,
+            'academicYears' => $request->user()->academicYears()->orderBy('title')->get(),
+        ]);
+    }
+
+    public function update(Request $request, Discipline $discipline)
+    {
+        abort_if($discipline->user_id !== $request->user()->id, 403);
+
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'academic_year_id' => ['required', 'exists:academic_years,id'],
+            'color' => ['nullable', 'string', 'max:20'],
+            'description' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $discipline->update($data);
+
+        return redirect()->route('disciplines.show', $discipline)
+            ->with('success', 'Disciplina atualizada.');
     }
 
     public function destroy(Request $request, Discipline $discipline)
