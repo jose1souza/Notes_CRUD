@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class TaskController extends Controller
 {
@@ -31,27 +30,14 @@ class TaskController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'discipline_id' => ['required', 'exists:disciplines,id'],
-            'due_date_date' => ['required', 'date'],
-            'due_date_time' => ['required', 'date_format:H:i'],
+            'due_date' => ['required', 'date', 'after:now'], // Garante que a data/hora seja maior que o momento atual
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
-
-        // Combina os inputs de data e hora em um único objeto Carbon
-        $dueDate = Carbon::createFromFormat('Y-m-d H:i', $data['due_date_date'].' '.$data['due_date_time']);
-
-        // Validação em tempo real: impede de salvar se o momento exato já passou
-        if ($dueDate->isPast()) {
-            return back()
-                ->withErrors([
-                    'due_date_date' => 'O prazo informado já passou. Escolha um horário igual ou posterior ao momento atual.'
-                ])
-                ->withInput();
-        }
 
         $request->user()->tasks()->create([
             'title' => $data['title'],
             'discipline_id' => $data['discipline_id'],
-            'due_date' => $dueDate,
+            'due_date' => $data['due_date'],
             'description' => $data['description'] ?? null,
             'completed' => false,
         ]);
@@ -86,25 +72,14 @@ class TaskController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'discipline_id' => ['required', 'exists:disciplines,id'],
-            'due_date_date' => ['required', 'date'],
-            'due_date_time' => ['required', 'date_format:H:i'],
+            'due_date' => ['required', 'date', 'after:now'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
-
-        $dueDate = Carbon::createFromFormat('Y-m-d H:i', $data['due_date_date'].' '.$data['due_date_time']);
-
-        if ($dueDate->isPast()) {
-            return back()
-                ->withErrors([
-                    'due_date_date' => 'O prazo informado já passou. Escolha um horário igual ou posterior ao momento atual.'
-                ])
-                ->withInput();
-        }
 
         $task->update([
             'title' => $data['title'],
             'discipline_id' => $data['discipline_id'],
-            'due_date' => $dueDate,
+            'due_date' => $data['due_date'],
             'description' => $data['description'] ?? null,
         ]);
 

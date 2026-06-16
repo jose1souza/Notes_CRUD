@@ -21,21 +21,15 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="discipline_id" class="form-label">Disciplina</label>
-                    <select name="discipline_id" id="discipline_id"
-                            class="form-select @error('discipline_id') is-invalid @enderror" required>
-                        <option value="">Selecione...</option>
-                        @foreach($disciplines as $discipline)
-                            <option value="{{ $discipline->id }}"
-                                {{ old('discipline_id', $task->discipline_id) == $discipline->id ? 'selected' : '' }}>
-                                {{ $discipline->title }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('discipline_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+    <label for="due_date" class="form-label">Data e Hora de entrega</label>
+    <input type="datetime-local" name="due_date" id="due_date"
+           class="form-control @error('due_date') is-invalid @enderror"
+           value="{{ old('due_date', $task->due_date ? $task->due_date->format('Y-m-d\TH:i') : '') }}"
+           min="{{ now()->format('Y-m-d\TH:i') }}" required>
+    @error('due_date')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
                 <div class="row g-3">
                     <div class="col-md-6">
