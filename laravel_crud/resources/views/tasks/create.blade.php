@@ -32,15 +32,32 @@
                     ])->toArray()"
                 />
 
-                <x-input
-    name="due_date"
-    label="Data e Hora de entrega"
-    type="datetime-local"
-    required="true"
-    :value="old('due_date')"
-    min="{{ now()->format('Y-m-d\TH:i') }}"
-    hint="Escolha um momento futuro para a entrega."
-/>
+                <div class="row">
+                    <div class="col-md-6">
+                        <x-input
+                            name="due_date_day"
+                            label="Data de entrega"
+                            type="date"
+                            required="true"
+                            :value="old('due_date_day')"
+                            min="{{ now()->format('Y-m-d') }}"
+                        />
+                    </div>
+                    <div class="col-md-6">
+                        <x-input
+                            name="due_date_time"
+                            label="Hora de entrega"
+                            type="time"
+                            required="true"
+                            :value="old('due_date_time')"
+                        />
+                    </div>
+                    <div class="col-12">
+                        <small class="form-text text-muted mb-3 d-block mt-n2">
+                            Escolha um momento futuro para a entrega.
+                        </small>
+                    </div>
+                </div>
 
                 <x-textarea
                     name="description"

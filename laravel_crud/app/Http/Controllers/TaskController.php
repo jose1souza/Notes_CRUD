@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class TaskController extends Controller
 {
@@ -27,18 +28,25 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'discipline_id' => ['required', 'exists:disciplines,id'],
-            'due_date' => ['required', 'date', 'after:now'], // Garante que a data/hora seja maior que o momento atual
+            'due_date_day' => ['required', 'date'],
+            'due_date_time' => ['required'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        $dueDate = Carbon::parse($request->due_date_day . ' ' . $request->due_date_time);
+
+        if ($dueDate->isPast()) {
+            return back()->withErrors(['due_date_day' => 'A data e hora de entrega deve ser um momento futuro.'])->withInput();
+        }
+
         $request->user()->tasks()->create([
-            'title' => $data['title'],
-            'discipline_id' => $data['discipline_id'],
-            'due_date' => $data['due_date'],
-            'description' => $data['description'] ?? null,
+            'title' => $request->title,
+            'discipline_id' => $request->discipline_id,
+            'due_date' => $dueDate,
+            'description' => $request->description ?? null,
             'completed' => false,
         ]);
 
@@ -69,18 +77,25 @@ class TaskController extends Controller
     {
         abort_if($task->user_id !== $request->user()->id, 403);
 
-        $data = $request->validate([
+        $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'discipline_id' => ['required', 'exists:disciplines,id'],
-            'due_date' => ['required', 'date', 'after:now'],
+            'due_date_day' => ['required', 'date'],
+            'due_date_time' => ['required'],
             'description' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        $dueDate = Carbon::parse($request->due_date_day . ' ' . $request->due_date_time);
+
+        if ($dueDate->isPast()) {
+            return back()->withErrors(['due_date_day' => 'A data e hora de entrega deve ser um momento futuro.'])->withInput();
+        }
+
         $task->update([
-            'title' => $data['title'],
-            'discipline_id' => $data['discipline_id'],
-            'due_date' => $data['due_date'],
-            'description' => $data['description'] ?? null,
+            'title' => $request->title,
+            'discipline_id' => $request->discipline_id,
+            'due_date' => $dueDate,
+            'description' => $request->description ?? null,
         ]);
 
         return redirect()->route('tasks.index')

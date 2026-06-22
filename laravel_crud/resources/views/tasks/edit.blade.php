@@ -3,69 +3,74 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="surface-card p-5">
-            <h1 class="h3 fw-bold mb-4">Editar tarefa</h1>
+        <div class="surface-card p-4 p-md-5">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <p class="text-uppercase text-primary small mb-1">Editar tarefa</p>
+                    <h1 class="h3 mb-0">{{ $task->title }}</h1>
+                </div>
+            </div>
 
-            <form method="POST" action="{{ route('tasks.update', $task) }}">
+            <form method="POST" action="{{ route('tasks.update', $task) }}" novalidate>
                 @csrf
                 @method('PUT')
 
-                <div class="mb-3">
-                    <label for="title" class="form-label">Título</label>
-                    <input type="text" name="title" id="title"
-                           class="form-control @error('title') is-invalid @enderror"
-                           value="{{ old('title', $task->title) }}" required>
-                    @error('title')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-input
+                    name="title"
+                    label="Título da tarefa"
+                    type="text"
+                    required="true"
+                    :value="old('title', $task->title)"
+                />
 
-                <div class="mb-3">
-    <label for="due_date" class="form-label">Data e Hora de entrega</label>
-    <input type="datetime-local" name="due_date" id="due_date"
-           class="form-control @error('due_date') is-invalid @enderror"
-           value="{{ old('due_date', $task->due_date ? $task->due_date->format('Y-m-d\TH:i') : '') }}"
-           min="{{ now()->format('Y-m-d\TH:i') }}" required>
-    @error('due_date')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-</div>
+                <x-select
+                    name="discipline_id"
+                    label="Disciplina"
+                    required="true"
+                    placeholder="Selecione uma disciplina"
+                    :options="$disciplines->mapWithKeys(fn($d) => [
+                        $d->id => $d->title . ' — ' . ($d->academicYear->title ?? 'Sem ano')
+                    ])->toArray()"
+                    :selected="old('discipline_id', $task->discipline_id)"
+                />
 
-                <div class="row g-3">
+                <div class="row">
                     <div class="col-md-6">
-                        <label for="due_date_date" class="form-label">Data de entrega</label>
-                        <input type="date" name="due_date_date" id="due_date_date"
-                               class="form-control @error('due_date_date') is-invalid @enderror"
-                               value="{{ old('due_date_date', $task->due_date ? $task->due_date->format('Y-m-d') : '') }}"
-                               min="{{ now()->format('Y-m-d') }}" required>
-                        @error('due_date_date')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <x-input
+                            name="due_date_day"
+                            label="Data de entrega"
+                            type="date"
+                            required="true"
+                            :value="old('due_date_day', $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('Y-m-d') : '')"
+                            min="{{ now()->format('Y-m-d') }}"
+                        />
                     </div>
                     <div class="col-md-6">
-                        <label for="due_date_time" class="form-label">Hora de entrega</label>
-                        <input type="time" name="due_date_time" id="due_date_time"
-                               class="form-control @error('due_date_time') is-invalid @enderror"
-                               value="{{ old('due_date_time', $task->due_date ? $task->due_date->format('H:i') : '') }}" required>
-                        @error('due_date_time')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <x-input
+                            name="due_date_time"
+                            label="Hora de entrega"
+                            type="time"
+                            required="true"
+                            :value="old('due_date_time', $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('H:i') : '')"
+                        />
+                    </div>
+                    <div class="col-12">
+                        <small class="form-text text-muted mb-3 d-block mt-n2">
+                            Escolha um momento futuro para a entrega.
+                        </small>
                     </div>
                 </div>
 
-                <div class="mb-4 mt-3">
-                    <label for="description" class="form-label">Anotações</label>
-                    <textarea name="description" id="description" rows="6"
-                              class="form-control @error('description') is-invalid @enderror"
-                              placeholder="Adicione detalhes ou observações sobre a tarefa...">{{ old('description', $task->description) }}</textarea>
-                    @error('description')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-textarea
+                    name="description"
+                    label="Observações"
+                    :rows="4"
+                    :value="old('description', $task->description)"
+                />
 
                 <div class="d-flex justify-content-between mt-4">
-                    <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary">Voltar para lista</a>
-                    <button type="submit" class="btn btn-brand">Salvar alterações</button>
+                    <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary">Voltar</a>
+                    <button type="submit" class="btn btn-brand">Atualizar tarefa</button>
                 </div>
             </form>
         </div>
