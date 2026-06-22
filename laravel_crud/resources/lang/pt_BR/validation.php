@@ -109,5 +109,12 @@ return [
         ],
     ],
 
-    'attributes' => [],
+    'attributes' => [
+        'title' => 'título',
+        'description' => 'descrição',
+        'due_date_date' => 'data de entrega',
+        'due_date_time' => 'hora de entrega',
+        'discipline_id' => 'disciplina',
+        'academic_year' => 'ano letivo',
+    ],
 ];
